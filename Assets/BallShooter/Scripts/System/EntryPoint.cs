@@ -1,4 +1,5 @@
 using System;
+using BallShooter.Scripts.Gameplay.Player;
 using BallShooter.Scripts.InputSystem;
 using BallShooter.Scripts.Uitls.Updater;
 using UnityEngine;
@@ -9,7 +10,9 @@ namespace BallShooter.Scripts.System
     {
         [SerializeField] private GameObject _player;
         [SerializeField] private GameObject _bullet;
-        
+        [SerializeField] private Transform _bulletSpawnPos;
+
+        private PlayerController _playerController;
         private InputManager _inputManager;
         private Updater _updater;
 
@@ -22,6 +25,7 @@ namespace BallShooter.Scripts.System
         {
             InitializeUpdater();
             InitializeInputManager();
+            InitializePlayer();
         }
 
         private void InitializeUpdater()
@@ -38,6 +42,12 @@ namespace BallShooter.Scripts.System
             _inputManager = new InputManager();
             _updater.RegisterUpdatable(_inputManager);
             _inputManager.Initialize();
+        }
+
+        private void InitializePlayer()
+        {
+            _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos);
+            _playerController.Initialize();
         }
     }
 }

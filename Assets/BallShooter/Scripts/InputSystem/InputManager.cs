@@ -37,7 +37,7 @@ namespace BallShooter.Scripts.InputSystem
                     OnHoldPerformed?.Invoke(true);
                     return;
                 }
-                OnHoldPerformed?.Invoke(true);
+                OnHoldPerformed?.Invoke(false);
             }
         }
 
@@ -48,7 +48,7 @@ namespace BallShooter.Scripts.InputSystem
                 OnHoldPerformed?.Invoke(true);
                 return;
             }
-            OnHoldPerformed?.Invoke(true);
+            OnHoldPerformed?.Invoke(false);
         }
     }
 }
