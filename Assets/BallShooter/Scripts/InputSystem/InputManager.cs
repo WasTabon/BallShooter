@@ -12,13 +12,13 @@ namespace BallShooter.Scripts.InputSystem
         
         public void Initialize()
         {
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                OnUpdatePerformed += CheckInputAndroid;
-            }
-            else if (Application.platform == RuntimePlatform.WindowsEditor)
+            if (Application.platform == RuntimePlatform.WindowsEditor)
             {
                 OnUpdatePerformed += CheckInputWindows;
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                OnUpdatePerformed += CheckInputAndroid;
             }
         }
         

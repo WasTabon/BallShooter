@@ -1,18 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using BallShooter.Scripts.InputSystem;
+using BallShooter.Scripts.Uitls.Updater;
 using UnityEngine;
 
-public class EntryPoint : MonoBehaviour
+namespace BallShooter.Scripts.System
 {
-    // Start is called before the first frame update
-    void Start()
+    public class EntryPoint : MonoBehaviour
     {
+        [SerializeField] private GameObject _player;
+        [SerializeField] private GameObject _bullet;
         
-    }
+        private InputManager _inputManager;
+        private Updater _updater;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private void Awake()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            InitializeUpdater();
+            InitializeInputManager();
+        }
+
+        private void InitializeUpdater()
+        {
+            GameObject created = new GameObject("Updater");
+            Updater updater = created.AddComponent<Updater>();
+            updater.Initialize();
+            
+            _updater = updater;
+        }
+
+        private void InitializeInputManager()
+        {
+            _inputManager = new InputManager();
+            _updater.RegisterUpdatable(_inputManager);
+            _inputManager.Initialize();
+        }
     }
 }
