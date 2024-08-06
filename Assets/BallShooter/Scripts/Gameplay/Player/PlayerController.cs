@@ -1,4 +1,5 @@
 using BallShooter.Scripts.InputSystem;
+using DG.Tweening;
 using UnityEngine;
 using PlayerSettings = BallShooter.Settings.Scriptables.PlayerSettings;
 
@@ -9,9 +10,11 @@ namespace BallShooter.Scripts.Gameplay.Player
         private const string SettingsName = "PlayerSettings";
         private const float DecreaseEverySecond = 0.01f;
         
+        public Bullet Bullet { get; private set; }
+        
         private readonly InputManager _inputManager;
-        private readonly GameObject _player;
-        private readonly GameObject _bullet;
+        private readonly GameObject _playerInScene;
+        private readonly GameObject _bulletInScene;
         private readonly Transform _bulletSpawnPos;
 
         private float _decreaseAmount;
@@ -23,15 +26,16 @@ namespace BallShooter.Scripts.Gameplay.Player
         public PlayerController(InputManager inputManager, GameObject player, GameObject bullet, Transform bulletSpawnPos)
         {
             _inputManager = inputManager;
-            _player = player;
-            _bullet = bullet;
+            _playerInScene = player;
+            _bulletInScene = bullet;
             _bulletSpawnPos = bulletSpawnPos;
+            Bullet = new Bullet();
         }
 
         public void Initialize()
         {
             _bulletSize = Vector3.zero;
-            _bullet.transform.localScale = _bulletSize;
+            _bulletInScene.transform.localScale = _bulletSize;
             
             GetSettings();
             
@@ -42,6 +46,12 @@ namespace BallShooter.Scripts.Gameplay.Player
         {
             if (state)
             {
+                if (_isHold = false)
+                {
+                    _bulletInScene.transform.position = _bulletSpawnPos.position;
+                    _bulletInScene.transform.localScale = Vector3.zero;
+                    _bulletInScene.SetActive(false);
+                }
                 _isHold = true;
                 _timeLastDecrease += Time.deltaTime;
                 if (_timeLastDecrease >= DecreaseEverySecond)
@@ -59,16 +69,21 @@ namespace BallShooter.Scripts.Gameplay.Player
 
         private void Shoot()
         {
-            _bullet.transform.position = _bulletSpawnPos.position;
-            _bullet.transform.localScale = _bulletSize;
-            _bullet.SetActive(true);
+            _bulletInScene.transform.position = _bulletSpawnPos.position;
+            _bulletInScene.SetActive(true);
+            BulletAnimation(_bulletSize).Play();
         }
         
         private void DecreasePlayerSize()
         {
             Vector3 decreaseVector = new Vector3(_decreaseAmount, _decreaseAmount, _decreaseAmount);
-            _player.transform.localScale -= decreaseVector;
+            _playerInScene.transform.localScale -= decreaseVector;
             _bulletSize += decreaseVector;
+        }
+
+        private Tween BulletAnimation(Vector3 scale)
+        {
+            return _bulletInScene.transform.DOScale(scale, 1f).SetEase(Ease.InOutBounce);
         }
         
         private void GetSettings()
