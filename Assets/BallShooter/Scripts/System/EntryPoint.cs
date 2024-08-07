@@ -1,7 +1,6 @@
 using BallShooter.Scripts.Gameplay.Player;
 using BallShooter.Scripts.InputSystem;
 using BallShooter.Scripts.Uitls.Updater;
-using DG.Tweening;
 using UnityEngine;
 
 namespace BallShooter.Scripts.System
@@ -46,7 +45,8 @@ namespace BallShooter.Scripts.System
 
         private void InitializePlayer()
         {
-            _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos);
+            ObstacleDetector obstacleDetector = _bullet.AddComponent<ObstacleDetector>();
+            _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos, obstacleDetector);
             _updater.RegisterUpdatable(_playerController.Bullet);
             _playerController.Initialize();
         }

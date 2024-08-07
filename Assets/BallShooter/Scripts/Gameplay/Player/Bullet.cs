@@ -1,11 +1,19 @@
 using BallShooter.Scripts.Uitls.Updater;
 using UnityEngine;
-using NotImplementedException = System.NotImplementedException;
 
 namespace BallShooter.Scripts.Gameplay.Player
 {
     public class Bullet : IUpdatable
     {
+        private readonly Transform _bulletTransform;
+
+        private bool _isMovable;
+
+        public Bullet(Transform bulletTransform)
+        {
+            _bulletTransform = bulletTransform;
+        }
+        
         public void Initialize()
         {
             
@@ -14,6 +22,11 @@ namespace BallShooter.Scripts.Gameplay.Player
         public void Update()
         {
             
+        }
+
+        public void SetMovable(bool state)
+        {
+            _isMovable = state;
         }
     }
 }
