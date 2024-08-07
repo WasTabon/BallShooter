@@ -11,6 +11,7 @@ namespace BallShooter.Scripts.Gameplay.Player
         private const string SettingsName = "PlayerSettings";
         private const float DecreaseEverySecond = 0.01f;
 
+        public event Action OnDied; 
         public event Action<bool> OnShot; 
         
         public Bullet Bullet { get; private set; }
@@ -27,7 +28,8 @@ namespace BallShooter.Scripts.Gameplay.Player
         
         private Vector3 _bulletSize;
         private bool _isHold;
-        
+        private bool _isMovable;
+
         public PlayerController(InputManager inputManager, GameObject player, GameObject bullet, Transform bulletSpawnPos, ObstacleDetector obstacleDetector)
         {
             _inputManager = inputManager;
@@ -45,29 +47,19 @@ namespace BallShooter.Scripts.Gameplay.Player
             GetSettings();
             Bullet = new Bullet(_bulletInScene.transform, _bulletMoveSpeed);
             
-            _inputManager.OnHoldPerformed += PrepareShoot;
+            _inputManager.OnHoldPerformed += HandleInput;
             OnShot += Bullet.SetMovable;
+            OnShot += SetMovable;
             _obstacleDetector.OnExplode += DisableBullet;
         }
 
-        private void PrepareShoot(bool state)
+        private void HandleInput(bool state)
         {
-            if (state)
+            if (state && !_isMovable)
             {
-                if (_isHold == false)
-                {
-                    _bulletInScene.transform.position = _bulletSpawnPos.position;
-                    _bulletInScene.transform.localScale = Vector3.zero;
-                }
+               PrepareToShoot();
                 
-                _isHold = true;
-                _timeLastDecrease += Time.deltaTime;
-                
-                if (_timeLastDecrease >= DecreaseEverySecond)
-                {
-                    DecreasePlayerSize();
-                    _timeLastDecrease = 0f;
-                }
+               StartHolding();
             }
             else if (_isHold)
             {
@@ -75,31 +67,55 @@ namespace BallShooter.Scripts.Gameplay.Player
                 Shoot();
             }
         }
-
+        
         private void Shoot()
         {
             _bulletInScene.transform.position = _bulletSpawnPos.position;
             _bulletInScene.SetActive(true);
-            BulletShootAnimation(_bulletSize).Play();
+            _bulletInScene.transform.localScale = _bulletSize;
             
             OnShot?.Invoke(true);
         }
         
         private void DecreasePlayerSize()
         {
-            Vector3 decreaseVector = new Vector3(_decreaseAmount, _decreaseAmount, _decreaseAmount);
-            _playerInScene.transform.localScale -= decreaseVector;
-            _bulletSize += decreaseVector;
+            if (_playerInScene.transform.localScale.x >= 0f)
+            {
+                Vector3 decreaseVector = new Vector3(_decreaseAmount, _decreaseAmount, _decreaseAmount);
+                _playerInScene.transform.localScale -= decreaseVector;
+                _bulletSize += decreaseVector;   
+            }
         }
 
         private void DisableBullet()
         {
             _bulletInScene.transform.localScale = Vector3.zero;
+            _bulletSize = Vector3.zero;
+            OnShot?.Invoke(false);
         }
 
-        private Tween BulletShootAnimation(Vector3 scale)
+        private void PrepareToShoot()
         {
-            return _bulletInScene.transform.DOScale(scale, 1f).SetEase(Ease.InOutBounce);
+            if (_isHold == false)
+            {
+                _bulletInScene.transform.position = _bulletSpawnPos.position;
+                if (_playerInScene.transform.localScale.x <= 0.1f)
+                {
+                    OnDied?.Invoke();
+                }
+            }
+        }
+
+        private void StartHolding()
+        {
+            _isHold = true;
+            _timeLastDecrease += Time.deltaTime;
+                
+            if (_timeLastDecrease >= DecreaseEverySecond)
+            {
+                DecreasePlayerSize();
+                _timeLastDecrease = 0f;
+            }
         }
         
         private void GetSettings()
@@ -107,6 +123,10 @@ namespace BallShooter.Scripts.Gameplay.Player
             PlayerSettings playerSettings = Resources.Load<PlayerSettings>(SettingsName);
             _decreaseAmount = playerSettings.DecreaseAmount;
             _bulletMoveSpeed = playerSettings.BulletMoveSpeed;
+        }
+        public void SetMovable(bool state)
+        {
+            _isMovable = state;
         }
     }
 }

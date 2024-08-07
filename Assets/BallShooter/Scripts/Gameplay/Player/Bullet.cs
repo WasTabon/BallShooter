@@ -30,6 +30,7 @@ namespace BallShooter.Scripts.Gameplay.Player
         {
             if (_isMovable)
             { 
+                Debug.Log("Moving");
                 _bulletTransform.Translate(_bulletTransform.forward * (_moveSpeed * Time.deltaTime));   
             }
         }

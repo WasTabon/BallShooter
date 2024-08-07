@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32a826f1833e0864487d935ff265c71e, type: 3}
   m_Name: PlayerSettings
   m_EditorClassIdentifier: 
-  _decreaseAmount: 0.01
+  _decreaseAmount: 0.02
   _bulletMoveSpeed: 5
