@@ -22,6 +22,7 @@ namespace BallShooter.Scripts.Gameplay.Player
         private readonly ObstacleDetector _obstacleDetector;
 
         private float _decreaseAmount;
+        private float _bulletMoveSpeed;
         private float _timeLastDecrease;
         
         private Vector3 _bulletSize;
@@ -34,7 +35,6 @@ namespace BallShooter.Scripts.Gameplay.Player
             _bulletInScene = bullet;
             _bulletSpawnPos = bulletSpawnPos;
             _obstacleDetector = obstacleDetector;
-            Bullet = new Bullet(_bulletInScene.transform);
         }
 
         public void Initialize()
@@ -43,9 +43,11 @@ namespace BallShooter.Scripts.Gameplay.Player
             _bulletInScene.transform.localScale = _bulletSize;
             
             GetSettings();
+            Bullet = new Bullet(_bulletInScene.transform, _bulletMoveSpeed);
             
             _inputManager.OnHoldPerformed += PrepareShoot;
             OnShot += Bullet.SetMovable;
+            _obstacleDetector.OnExplode += DisableBullet;
         }
 
         private void PrepareShoot(bool state)
@@ -56,10 +58,11 @@ namespace BallShooter.Scripts.Gameplay.Player
                 {
                     _bulletInScene.transform.position = _bulletSpawnPos.position;
                     _bulletInScene.transform.localScale = Vector3.zero;
-                    _bulletInScene.SetActive(false);
                 }
+                
                 _isHold = true;
                 _timeLastDecrease += Time.deltaTime;
+                
                 if (_timeLastDecrease >= DecreaseEverySecond)
                 {
                     DecreasePlayerSize();
@@ -89,6 +92,11 @@ namespace BallShooter.Scripts.Gameplay.Player
             _bulletSize += decreaseVector;
         }
 
+        private void DisableBullet()
+        {
+            _bulletInScene.transform.localScale = Vector3.zero;
+        }
+
         private Tween BulletShootAnimation(Vector3 scale)
         {
             return _bulletInScene.transform.DOScale(scale, 1f).SetEase(Ease.InOutBounce);
@@ -98,6 +106,7 @@ namespace BallShooter.Scripts.Gameplay.Player
         {
             PlayerSettings playerSettings = Resources.Load<PlayerSettings>(SettingsName);
             _decreaseAmount = playerSettings.DecreaseAmount;
+            _bulletMoveSpeed = playerSettings.BulletMoveSpeed;
         }
     }
 }

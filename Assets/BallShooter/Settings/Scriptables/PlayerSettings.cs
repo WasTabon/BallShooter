@@ -6,7 +6,9 @@ namespace BallShooter.Settings.Scriptables
     public class PlayerSettings : ScriptableObject
     {
         [SerializeField] private float _decreaseAmount;
+        [SerializeField] private float _bulletMoveSpeed;
 
         public float DecreaseAmount => _decreaseAmount;
+        public float BulletMoveSpeed => _bulletMoveSpeed;
     }
 }

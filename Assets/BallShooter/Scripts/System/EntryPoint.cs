@@ -46,6 +46,7 @@ namespace BallShooter.Scripts.System
         private void InitializePlayer()
         {
             ObstacleDetector obstacleDetector = _bullet.AddComponent<ObstacleDetector>();
+            obstacleDetector.Initialize(_bullet.transform);
             _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos, obstacleDetector);
             _updater.RegisterUpdatable(_playerController.Bullet);
             _playerController.Initialize();

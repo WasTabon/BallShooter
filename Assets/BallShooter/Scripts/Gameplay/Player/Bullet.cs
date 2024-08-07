@@ -7,26 +7,31 @@ namespace BallShooter.Scripts.Gameplay.Player
     {
         private readonly Transform _bulletTransform;
 
+        private readonly float _moveSpeed;
         private bool _isMovable;
 
-        public Bullet(Transform bulletTransform)
+        public Bullet(Transform bulletTransform, float moveSpeed)
         {
             _bulletTransform = bulletTransform;
-        }
-        
-        public void Initialize()
-        {
-            
+            _moveSpeed = moveSpeed;
         }
 
         public void Update()
         {
-            
+            MoveHandler();
         }
 
         public void SetMovable(bool state)
         {
             _isMovable = state;
+        }
+
+        private void MoveHandler()
+        {
+            if (_isMovable)
+            { 
+                _bulletTransform.Translate(_bulletTransform.forward * (_moveSpeed * Time.deltaTime));   
+            }
         }
     }
 }
