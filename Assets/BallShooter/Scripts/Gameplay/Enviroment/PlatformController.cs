@@ -11,8 +11,7 @@ namespace BallShooter.Scripts.Gameplay.Enviroment
         private Vector3 initialPlatformScale;
         private Vector3 initialPlayerScale;
         private float[] initialObstaclePositionsX;
-        private float obstacleMoveFactor = 0.8f; // Фактор, контролирующий смещение препятствий
-
+        private float obstacleMoveFactor = 0.8f;
         private void Start()
         {
             initialPlatformScale = platform.localScale;
@@ -28,8 +27,6 @@ namespace BallShooter.Scripts.Gameplay.Enviroment
         public void UpdatePlatform()
         {
             float scaleRatio = player.localScale.x / initialPlayerScale.x;
-            
-            //platform.localScale = new Vector3(initialPlatformScale.x * scaleRatio, initialPlatformScale.y, initialPlatformScale.z);
 
             for (int i = 0; i < obstacles.Length; i++)
             {
