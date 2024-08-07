@@ -1,6 +1,6 @@
 using System;
+using BallShooter.Scripts.Gameplay.Enviroment;
 using BallShooter.Scripts.InputSystem;
-using DG.Tweening;
 using UnityEngine;
 using PlayerSettings = BallShooter.Settings.Scriptables.PlayerSettings;
 
@@ -21,6 +21,7 @@ namespace BallShooter.Scripts.Gameplay.Player
         private readonly GameObject _bulletInScene;
         private readonly Transform _bulletSpawnPos;
         private readonly ObstacleDetector _obstacleDetector;
+        private readonly PlatformController _platformController;
 
         private float _decreaseAmount;
         private float _bulletMoveSpeed;
@@ -30,13 +31,14 @@ namespace BallShooter.Scripts.Gameplay.Player
         private bool _isHold;
         private bool _isMovable;
 
-        public PlayerController(InputManager inputManager, GameObject player, GameObject bullet, Transform bulletSpawnPos, ObstacleDetector obstacleDetector)
+        public PlayerController(InputManager inputManager, GameObject player, GameObject bullet, Transform bulletSpawnPos, ObstacleDetector obstacleDetector, PlatformController platformController)
         {
             _inputManager = inputManager;
             _playerInScene = player;
             _bulletInScene = bullet;
             _bulletSpawnPos = bulletSpawnPos;
             _obstacleDetector = obstacleDetector;
+            _platformController = platformController;
         }
 
         public void Initialize()
@@ -92,6 +94,8 @@ namespace BallShooter.Scripts.Gameplay.Player
             _bulletInScene.transform.localScale = Vector3.zero;
             _bulletSize = Vector3.zero;
             OnShot?.Invoke(false);
+            
+            _platformController.UpdatePlatform();
         }
 
         private void PrepareToShoot()

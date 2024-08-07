@@ -14,6 +14,7 @@ namespace BallShooter.Scripts.System
         [SerializeField] private Transform _bulletSpawnPos;
         [SerializeField] private UIView _uiView;
         [SerializeField] private Door _door;
+        [SerializeField] private PlatformController _platformController;
 
         private PlayerController _playerController;
         private InputManager _inputManager;
@@ -54,7 +55,8 @@ namespace BallShooter.Scripts.System
             ObstacleDetector obstacleDetector = _bullet.AddComponent<ObstacleDetector>();
             obstacleDetector.Initialize(_bullet.transform);
             
-            _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos, obstacleDetector);
+            _playerController = new PlayerController(_inputManager, _player, _bullet, _bulletSpawnPos, obstacleDetector, _platformController);
+            
             _playerController.Initialize();
             
             _updater.RegisterUpdatable(_playerController.Bullet);
